@@ -1,0 +1,319 @@
+{
+  "name": "Ticket raise system",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "139tbHGpYCfzz5d1XTUNrs-78c1Yvq_JLg-bDcEuHSiM",
+          "mode": "list",
+          "cachedResultName": "Database for Tickets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/139tbHGpYCfzz5d1XTUNrs-78c1Yvq_JLg-bDcEuHSiM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/139tbHGpYCfzz5d1XTUNrs-78c1Yvq_JLg-bDcEuHSiM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Ticket ID": "={{ $json.ticketId }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Priority": "={{ $json.priority }}",
+            "Status": "={{ $json.status }}",
+            "CreatedAt": "={{ $json.createdAt }}",
+            "Category": "={{ $('Ticket intake').item.json.Issues }}",
+            "Description": "={{ $('Ticket intake').item.json['Describe your issue?'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ticket ID",
+              "displayName": "Ticket ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CreatedAt",
+              "displayName": "CreatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        -64
+      ],
+      "id": "90b8fdbb-60bc-4f43-9dd5-a4cecb39f76e",
+      "name": "Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FnbjKotjDms7zrYd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json;\nconsole.log(body);\nconst ticketId = 'IT-' + Math.floor(10000 + Math.random() * 90000);\nconst createdAt = new Date().toISOString();\n\nreturn [{\n  json: {\n    ticketId,\n    createdAt,\n    name: body['Full Name'],\n    email: body['Email Address'],\n    category: body['Issue Category'],\n    priority: body['Priority'],\n    description: body['Describe your issue'],\n    status: 'Open'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -64
+      ],
+      "id": "220b201a-7ee6-447e-8401-256686b7533a",
+      "name": "Ticket Generate"
+    },
+    {
+      "parameters": {
+        "formTitle": "IT Support Request",
+        "formDescription": "We'll get back to you soon",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name"
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Issues",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Software"
+                  },
+                  {
+                    "option": "Hardware"
+                  },
+                  {
+                    "option": "Network"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Priority",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Low"
+                  },
+                  {
+                    "option": "Medium"
+                  },
+                  {
+                    "option": "High"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Describe your issue?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        304,
+        -64
+      ],
+      "id": "cc5e36be-144d-4dfd-b9e1-907a813ef0c2",
+      "name": "Ticket intake",
+      "webhookId": "7ac78c66-5c25-4841-b66d-27ff48f089af"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BS2JQT8LB",
+          "mode": "list",
+          "cachedResultName": "team-"
+        },
+        "text": "A new support ticket has been submitted with the following details: Ticket ID: IT-73310 Submitted By: Fatima Ali Category: Software Priority Level: High Description: Microsoft Office 365 Subscription plan has ended soon.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1008,
+        -64
+      ],
+      "id": "90dc5c1b-05cd-4e35-8154-34e97d842e5b",
+      "name": "Notify a Team",
+      "webhookId": "300b16b9-3e39-4dc3-af5f-4650006cad2a",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "esXSwFV9lMmtltr5",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=fayyazsabahat842@gmail.com, aqsamalik3347@gmail.com, areebaf178@gmail.com, aimanraza2428@gmail.com",
+        "subject": "Your Ticket Has Been Received",
+        "emailType": "text",
+        "message": "Hey Beautiful Souls, Your ticket has been received. Our team is currently reviewing your request and will reach out shortly. Best, Mr. Rustam Ali",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        -64
+      ],
+      "id": "fc96cfec-1c1b-4320-aea0-9a4a7a870487",
+      "name": "Send a Employee",
+      "webhookId": "fb537dc5-3963-4c95-bce4-14ea680d63fc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "G5FnXwhUkSrmqnL8",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ticket Generate": {
+      "main": [
+        [
+          {
+            "node": "Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket intake": {
+      "main": [
+        [
+          {
+            "node": "Ticket Generate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database": {
+      "main": [
+        [
+          {
+            "node": "Notify a Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify a Team": {
+      "main": [
+        [
+          {
+            "node": "Send a Employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "dc00dad0-f731-4b87-a971-724279e30d8c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d7d8d5a6381272bc84b529df93549da5d66e09ac064ead74e2baa1306101d92"
+  },
+  "nodeGroups": [],
+  "id": "GoCBq1pcXHzteUty",
+  "tags": []
+}
